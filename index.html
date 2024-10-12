@@ -4,6 +4,7 @@
 <head>
     <title>Text-to-Speech App</title>
     <style>
+        /* [Same CSS as before, included for completeness] */
         body {
             font-family: Arial, sans-serif;
             background-color: #e9f5ee;
@@ -126,6 +127,7 @@
         <div class="button-group">
             <button id="controlBtn">Start</button>
             <button id="stopBtn">Stop</button>
+            <button id="deleteBtn">Delete</button>
         </div>
         <div id="animation">
             <div class="wave"></div>
@@ -144,6 +146,7 @@
         const textInput = document.getElementById('textInput');
         const controlBtn = document.getElementById('controlBtn');
         const stopBtn = document.getElementById('stopBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
         const animation = document.getElementById('animation');
 
         let utterance = null;
@@ -159,6 +162,19 @@
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoices;
         }
+
+        // Load saved text from localStorage on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedText = localStorage.getItem('savedText');
+            if (savedText) {
+                textInput.value = savedText;
+            }
+        });
+
+        // Save text to localStorage whenever it changes
+        textInput.addEventListener('input', () => {
+            localStorage.setItem('savedText', textInput.value);
+        });
 
         // Control button handles Start, Pause, and Resume
         controlBtn.addEventListener('click', () => {
@@ -208,6 +224,13 @@
                 controlBtn.textContent = 'Start';
                 animation.style.display = 'none'; // Hide the animation
             }
+        });
+
+        // Delete text
+        deleteBtn.addEventListener('click', () => {
+            textInput.value = '';
+            localStorage.removeItem('savedText'); // Remove saved text from localStorage
+            textInput.focus(); // Optional: focus the textarea after clearing
         });
     </script>
 </body>
